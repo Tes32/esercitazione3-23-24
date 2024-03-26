@@ -14,6 +14,10 @@ Immagine Originale | Immagine Finale
 :-----------------: | :-----------------:
 ![](data/iguana.jpg) | ![](data/edge_track_iguana.png)
 
+**Il vostro compito in questa esercitazione è quello di sviluppare il Canny Edge Detector usando le metodologie di progetto viste nelle esercitazioni precedenti, in particolare la TDD.**
+
+Dato che la funzione da implementare è una sola, non dovreste creare dei test per i suoi sotto blocchi (ricordate che si testano esplicitamente solo le funzionalità esposte verso l'utente). Tuttavia, in _non-maximum suppression_ è complesso, quindi vi consiglio di testarlo indipendentemente. Inoltre, per testare la funzione globale, potreste creare dei test semplici su immagini elementari, o su dati costruti nel tese, di cui potete calcolare a tavolino il risultato corretto. Se volete farvi una idea di come funziona una implementazione ufficiale, potete sfruttare quella di OpenCV ([sito web](https://opencv.org/); [installazione](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)).  
+
 # 0. Setup
 Copiate i vostri file `process_image.cpp` e `filter_image.cpp` nella cartella `./src/`.
 
