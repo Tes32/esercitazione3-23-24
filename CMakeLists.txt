@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.19)
 
 project(esercitazione3-23-24)
 
-set(CMAKE_CXX_FLAGS "-Wall -fdiagnostics-color=always -std=c++11 -pthread -g -march=native -fPIC")
+set(CMAKE_CXX_FLAGS "-Wall -fdiagnostics-color=always -std=c++2b -pthread -g -march=native -fPIC")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/)
+
+set (Boost_USE_STATIC_LIBS OFF)
+find_package (Boost REQUIRED COMPONENTS unit_test_framework)
+include_directories (${Boost_INCLUDE_DIRS})
 
 add_library(uwimg++ SHARED
             src/utils.cpp
@@ -20,4 +24,5 @@ add_library(uwimg++ SHARED
 
 link_libraries(uwimg++ m stdc++)
 
-add_executable(test2 src/test/test2.cpp)
+add_executable (test_canny src/test/test2.cpp)
+target_link_libraries (test_canny ${Boost_LIBRARIES})

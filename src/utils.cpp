@@ -1,12 +1,9 @@
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 #include "utils.h"
 #include "image.h"
 
-int tests_total = 0;
-int tests_fail = 0;
 
 int same_image(const Image& a, const Image& b) { return a==b; }
 
