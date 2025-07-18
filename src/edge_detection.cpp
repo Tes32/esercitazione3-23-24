@@ -19,8 +19,10 @@ Output:
 Image smooth_image(const Image& im, float sigma)
 {
     // TODO: Your code here
-    NOT_IMPLEMENTED();
-    return im;
+     Image filter = make_gaussian_filter(1.4f);
+     Image smoothed = convolve_image(im, filter, true);
+     return smoothed;
+
 }
 
 
@@ -35,8 +37,25 @@ Output:
 pair<Image,Image> compute_gradient(const Image& im)
 {
     // TODO: Your code here
-    NOT_IMPLEMENTED();
-    return{im, im};
+    Image sobel_x = make_gx_filter();
+    Image sobel_y = make_gy_filter();
+
+    Image gx = convolve_image(im, sobel_x, true);
+    Image gy = convolve_image(im, sobel_y, true);
+
+    Image mag(im.w, im.h, 1);
+    Image theta(im.w, im.h, 1);
+
+    for (int y = 0; y < im.h; ++y) {
+        for (int x = 0; x < im.w; ++x) {
+            float dx = gx.clamped_pixel(x, y, 0);
+            float dy = gy.clamped_pixel(x, y, 0);
+            mag.set_pixel(x, y, 0, std::sqrt(dx * dx + dy * dy));
+            theta.set_pixel(x, y, 0, std::atan2(dy, dx));
+        }
+    }
+
+    return {mag, theta};
 }
 
 
@@ -58,7 +77,32 @@ Image non_maximum_suppression(const Image& mag, const Image& dir)
         for (int x = 0; x < mag.w; x++) {
             
             // TODO: Your code here
-            NOT_IMPLEMENTED();
+            float angle = dir.clamped_pixel(x, y, 0);
+float magnitude = mag.clamped_pixel(x, y, 0);
+
+float deg = angle * 180.0f / M_PI;
+if (deg < 0) deg += 180;
+
+float neighbor1 = 0, neighbor2 = 0;
+
+if ((deg >= 0 && deg < 22.5) || (deg >= 157.5 && deg <= 180)) {
+    neighbor1 = mag.clamped_pixel(x + 1, y, 0);
+    neighbor2 = mag.clamped_pixel(x - 1, y, 0);
+} else if (deg >= 22.5 && deg < 67.5) {
+    neighbor1 = mag.clamped_pixel(x + 1, y - 1, 0);
+    neighbor2 = mag.clamped_pixel(x - 1, y + 1, 0);
+} else if (deg >= 67.5 && deg < 112.5) {
+    neighbor1 = mag.clamped_pixel(x, y + 1, 0);
+    neighbor2 = mag.clamped_pixel(x, y - 1, 0);
+} else if (deg >= 112.5 && deg < 157.5) {
+    neighbor1 = mag.clamped_pixel(x - 1, y - 1, 0);
+    neighbor2 = mag.clamped_pixel(x + 1, y + 1, 0);
+}
+
+if (magnitude >= neighbor1 && magnitude >= neighbor2)
+    nms.set_pixel(x, y, 0, magnitude);
+else
+    nms.set_pixel(x, y, 0, 0);
 
             // Get the direction of the gradient at the current pixel
 
@@ -93,7 +137,18 @@ Image double_thresholding(const Image& im, float lowThreshold, float highThresho
     Image res(im.w, im.h, im.c);
 
     // TODO: Your code here
-    NOT_IMPLEMENTED();
+        for (int y = 0; y < im.h; ++y) {
+    for (int x = 0; x < im.w; ++x) {
+        float val = im.clamped_pixel(x, y, 0);
+        if (val >= highThreshold)
+            res.set_pixel(x, y, 0, strongVal);
+        else if (val >= lowThreshold)
+            res.set_pixel(x, y, 0, weakVal);
+        else
+            res.set_pixel(x, y, 0, 0);
+    }
+}
+
 
     return res;
 }
@@ -115,7 +170,21 @@ Image edge_tracking(const Image& im, float weak, float strong)
     for (int y=0; y < im.h; ++y) {
         for (int x=0; x < im.w; ++x) {
             // TODO: Your code here
-            NOT_IMPLEMENTED();
+                        float val = im.clamped_pixel(x, y, 0);
+if (val == weak) {
+    bool connected = false;
+    for (int dy = -1; dy <= 1; ++dy) {
+        for (int dx = -1; dx <= 1; ++dx) {
+            if (im.clamped_pixel(x + dx, y + dy, 0) == strong) {
+                connected = true;
+            }
+        }
+    }
+    res.set_pixel(x, y, 0, connected ? strong : 0);
+} else {
+    res.set_pixel(x, y, 0, val);
+}
+
 
             // Hint: use clamped_pixel when checking the neighbors to avoid going out of bounds
         }
